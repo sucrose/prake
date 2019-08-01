@@ -1,0 +1,14 @@
+{
+    "name": "sucrose/prake",
+    "description": "PHP class to rake (scrape) public proxy lists for updated proxies",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Sucrose",
+            "email": "sucrose@pm.me"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
