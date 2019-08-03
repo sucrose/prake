@@ -8,9 +8,13 @@
      *  email:      sucrose@pm.me
      *
      */
+    namespace sucrose\prake;
+
     class Prake {
         public $debug_mode = true;
         public $cookies;
+
+        protected $module_dir;
 
         function __construct()
         {
@@ -35,7 +39,7 @@
 
         public function __get($var)
         {
-            return "[ERROR] Inexistant property: $var";
+            return "[ERROR] Inexistent property: $var";
         }
 
         public function __toString()
@@ -43,6 +47,9 @@
             return $this->get_status();
         }
 
+        /**
+         * @return string
+         */
         public function debug_mode()
         {
             $dbg = ($this->debug_mode) ? 'enabled' : 'disabled';
@@ -51,11 +58,17 @@
         }
 
         /**
-         * PRIVATE
+         * @param string $dir
          */
+        public function set_module_dir($dir) {
+            $this->module_dir = $dir;
+        }
 
         /**
-         * PUBLIC
+         * @return string
          */
+        public function get_module_dir() {
+            return $this->module_dir;
+        }
     }
 ?>
