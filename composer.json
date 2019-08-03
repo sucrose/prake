@@ -10,5 +10,7 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "campo/random-user-agent": "^1.3"
+    }
 }
