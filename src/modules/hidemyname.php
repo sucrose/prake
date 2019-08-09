@@ -7,7 +7,7 @@
         }
 
         private function curl_get($user_agent) {
-            $api_key = '8966726267371032';
+            $api_key = '';
             $ch = curl_init();
             curl_setopt_array($ch, array(
                 CURLOPT_URL => "https://hidemy.name/api/proxylist.txt?maxtime=500&type=s&out=plain&code=$api_key",

@@ -7,7 +7,7 @@
         }
 
         private function curl_get($user_agent) {
-            $api_key = 'JNAC4-TI0LJ-IAOQM-DYTOU';
+            $api_key = '';
             $ch = curl_init();
             curl_setopt_array($ch, array(
                 CURLOPT_URL => "https://api.proxyscrape.com/?request=displayproxies&proxytype=all&timeout=500&anonymity=all&ssl=yes&serialkey=$api_key",

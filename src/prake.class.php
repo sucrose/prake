@@ -13,8 +13,7 @@ namespace sucrose;
 
 require __DIR__ . '/vendor/autoload.php';
 
-class Prake
-{
+class Prake {
     private $arr_proxies = [];
     private $debug_mode = false;
     private $module_dir = '';
@@ -22,8 +21,7 @@ class Prake
     /**
      * initiation
      */
-    function __construct()
-    {
+    function __construct() {
         $a = func_get_args();
         $l = func_num_args();
         if (method_exists($this, $f = '__construct' . $l)) {
@@ -37,8 +35,7 @@ class Prake
      * @param   dbg     boolean for debug mode
      * @return  string  debug mode state
      */
-    function __construct1($dbg)
-    {
+    function __construct1($dbg) {
         $this->debug_mode = $dbg;
         return ($this->debug_mode) ? '<pre>[ + ] prake: initiated | debug mode</pre>' : '';
     }
@@ -48,48 +45,42 @@ class Prake
      *
      * @return  string  debug mode state
      */
-    function __destruct()
-    {
+    function __destruct() {
         return ($this->debug_mode) ? '<pre>[ + ] prake: terminated</pre>' : true;
     }
 
     /**
      * @return boolean
      */
-    public function debug_status()
-    {
+    public function debug_status() {
         return ($this->debug_mode) ? true : false;
     }
 
     /**
      * @param string $dir [ex: $prake->set_module_dir(dirname(__FILE__) . '\modules\\')]
      */
-    public function set_module_dir($dir)
-    {
+    public function set_module_dir($dir) {
         $this->module_dir = $dir;
     }
 
     /**
      * @return string
      */
-    public function get_module_dir()
-    {
+    public function get_module_dir() {
         return $this->module_dir;
     }
 
     /**
      * @return integer
      */
-    public function get_proxy_count()
-    {
+    public function get_proxy_count() {
         return count($this->arr_proxies);
     }
 
     /**
      * @return array
      */
-    public function rake()
-    {
+    public function rake() {
         spl_autoload_register(function ($class_name) {
             $filepath = $this->get_module_dir() . $class_name . '.php';
             if (file_exists($filepath)) {
@@ -117,8 +108,7 @@ class Prake
      * @param   array arr_proxies   proxy list array
      * @return  string              formatted output content
      */
-    public function export_list($format, $arr_proxies)
-    {
+    public function export_list($format, $arr_proxies) {
         $list_output = '';
         switch ($format) {
             case 'json':
@@ -127,7 +117,7 @@ class Prake
                 break;
             case 'txt':
             default:
-                $list_output = implode('\n', $arr_proxies);
+                $list_output = implode('<br>', $arr_proxies);
         }
         return $list_output;
     }
