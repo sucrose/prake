@@ -11,12 +11,15 @@
 
 namespace sucrose;
 
+use Campo\UserAgent;
+
 require __DIR__ . '/vendor/autoload.php';
 
 class Prake {
     private $arr_proxies = [];
     private $debug_mode = false;
     private $module_dir = '';
+    private $whitelisted_mods = [];
 
     /**
      * initiation
@@ -30,14 +33,32 @@ class Prake {
     }
 
     /**
-     * initiation -> debug mode
+     * init -> debug mode
      *
      * @param   dbg     boolean for debug mode
-     * @return  string  debug mode state
      */
     function __construct1($dbg) {
         $this->debug_mode = $dbg;
-        return ($this->debug_mode) ? '<pre>[ + ] prake: initiated | debug mode</pre>' : '';
+        echo $this->debug_output('<pre>[ + ] prake: init | debug mode enabled</pre>');
+        return;
+    }
+
+    /**
+     * init -> debug mode, whitelisted modules
+     *
+     * @param   dbg     boolean for debug mode
+     * @param   mods    array for whitelisted mods
+     */
+    function __construct2($dbg, $mods) {
+        $this->debug_mode = $dbg;
+        $this->whitelisted_mods = $mods;
+        $tmp = '';
+        $tmp .= ($this->debug_mode) ? '<pre>[ + ] prake: init | debug mode enabled</pre>' : '';
+        $tmp .= ($this->debug_mode && !empty($this->whitelisted_mods)) ? '<pre>[ + ] prake: init | whitelisted modules: [' . implode(', ', $this->whitelisted_mods) . ']</pre>' : '';
+        if (0 < strlen($tmp)) {
+            echo $this->debug_output($tmp);
+        }
+        return;
     }
 
     /**
@@ -46,7 +67,8 @@ class Prake {
      * @return  string  debug mode state
      */
     function __destruct() {
-        return ($this->debug_mode) ? '<pre>[ + ] prake: terminated</pre>' : true;
+        echo $this->debug_output('<pre>[ + ] prake: terminated</pre>');
+        return true;
     }
 
     /**
@@ -78,24 +100,55 @@ class Prake {
     }
 
     /**
+     * @param  str      debug output string
+     * @return string
+     */
+    private function debug_output($str) {
+        return ($this->debug_mode) ? $str : '';
+    }
+
+    /**
+     * @return string
+     */
+    private function get_useragent() {
+        $ua = UserAgent::random();
+        echo $this->debug_output("<pre>[ + ] prake: rake() -> get_useragent() | user-agent: $ua</pre>");
+        return $ua;
+    }
+
+    /**
      * @return array
      */
     public function rake() {
         spl_autoload_register(function ($class_name) {
-            $filepath = $this->get_module_dir() . $class_name . '.php';
+            $filepath = $this->get_module_dir() . "$class_name.php";
             if (file_exists($filepath)) {
                 require $filepath;
+                echo $this->debug_output("<pre>[ + ] prake: rake() | module loaded: $class_name</pre>");
                 return false;
             }
+            return true;
         });
-        $user_agent = \Campo\UserAgent::random();
+        $ua = $this->get_useragent();
         $dir = new \DirectoryIterator($this->get_module_dir());
-        foreach ($dir as $fileinfo) {
-            if (!$fileinfo->isDot()) {
-                $basename = $fileinfo->getBasename('.php');
-                $basenameClass = new $basename();
-                $arr = $basenameClass->get_proxies($user_agent);
-                $this->arr_proxies[$basename] = $arr;
+        foreach ($dir as $file_info) {
+            if (!$file_info->isDot()) {
+                $basename = $file_info->getBasename('.php');
+                if (empty($this->whitelisted_mods)) {
+                    $basenameClass = new $basename();
+                    $arr = $basenameClass->get_proxies($ua);
+                    echo $this->debug_output("<pre>[ + ] prake: rake() -> get_proxies() | $basename: " . count($arr) . '</pre>');
+                    $this->arr_proxies[$basename] = $arr;
+                } else {
+                    if (isset($this->whitelisted_mods[$basename])) {
+                        $basenameClass = new $basename();
+                        $arr = $basenameClass->get_proxies($ua);
+                        echo $this->debug_output("<pre>[ + ] prake: rake() -> get_proxies() | $basename: " . count($arr) . '</pre>');
+                        $this->arr_proxies[$basename] = $arr;
+                    } else {
+                        echo $this->debug_output("<pre>[ + ] prake: rake() | module ignored: $basename</pre>");
+                    }
+                }
             }
         }
         return $this->arr_proxies;

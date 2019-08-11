@@ -35,7 +35,7 @@
         public function get_proxies($user_agent) {
             $arr = [];
             $resp = [];
-            for ($i = 0; $i < 26; $i++) {
+            for ($i = 0; $i < 24; $i++) {
                 $resp[] = $this->curl_get("http://www.proxz.com/proxy_list_high_anonymous_$i.html", $user_agent);
             }
             $resp_merged = implode(',', $resp);
